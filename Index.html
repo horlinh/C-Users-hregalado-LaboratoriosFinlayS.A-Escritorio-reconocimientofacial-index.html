@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Explora las Ciencias Interactivas</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<style>
+body {
+    margin:0;
+    font-family: 'Roboto', sans-serif;
+    transition: background 1s ease;
+    overflow-x: hidden;
+}
+@keyframes blink {
+    0% {opacity:1;}
+    50% {opacity:0.4;}
+    100% {opacity:1;}
+}
+header {
+    background:#1e3d59;
+    color:white;
+    text-align:center;
+    padding:25px 0 10px 0;
+    font-family: 'Orbitron', sans-serif;
+    position:sticky;
+    top:0;
+    z-index:100;
+    box-shadow:0 4px 8px rgba(0,0,0,0.2);
+}
+header h2 {
+    font-size:1.8em;
+    margin:10px 0;
+    font-weight:700;
+    color:#FF0000; /* rojo intenso */
+    animation: blink 1.5s infinite;
+}
+header h1 {
+    font-size:2.5em;
+    margin:5px 0;
+}
+#container {
+    display:flex;
+    flex-wrap:wrap;
+    padding:20px;
+    justify-content:center;
+}
+#menu {
+    flex:1;
+    min-width:250px;
+    max-width:300px;
+    margin:10px;
+    background:rgba(255,255,255,0.95);
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 6px 12px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
+}
+#menu:hover { transform:scale(1.02);}
+#menu h2 { text-align:center; margin-bottom:15px; color:#1e3d59; font-family: 'Orbitron', sans-serif;}
+button, select, input[type=text] {
+    display:block;
+    width:100%;
+    padding:12px;
+    margin-bottom:10px;
+    border:none;
+    border-radius:8px;
+    font-size:1em;
+    transition:all 0.3s ease;
+}
+button:hover, select:hover, input[type=text]:hover {
+    background:#1e3d59;
+    color:white;
+    cursor:pointer;
+}
+#content {
+    flex:3;
+    min-width:350px;
+    margin:10px;
+    background:rgba(255,255,255,0.95);
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 6px 12px rgba(0,0,0,0.1);
+    position:relative;
+    overflow:hidden;
+    transition: all 0.5s ease;
+}
+.branch-info {
+    margin-left:20px;
+    background:#e0f7fa;
+    padding:10px;
+    border-radius:8px;
+    margin-top:5px;
+    display:none;
+    transition: all 0.3s;
+}
+h3 { color:#ff6f61; font-family: 'Orbitron', sans-serif;}
+h4 { color:#1e3d59; font-family: 'Orbitron', sans-serif;}
+</style>
+</head>
+<body>
+
+<header>
+    <h2>
+        Esta página fue creada con Inteligencia Artificial. Feria de la Ciencia 2025, Instituto IHER. NOVENO GRADO
+    </h2>
+    <h1>Explora las Ciencias Interactivas</h1>
+</header>
+
+<div id="container">
+    <div id="menu">
+        <h2>Selecciona una Ciencia</h2>
+        <input type="text" id="searchBox" placeholder="Buscar ciencia...">
+        <select id="scienceSelect">
+            <option value="">-- Elige una ciencia --</option>
+        </select>
+        <button onclick="showRandomScience()">Ciencia Aleatoria</button>
+    </div>
+
+    <div id="content">
+        <h3>Bienvenido a la exploración de las ciencias</h3>
+        <p>Selecciona una ciencia desde el menú para ver su descripción, ramas y ejemplos. ¡Explora y aprende!</p>
+    </div>
+</div>
+
+<audio id="clickSound" src="https://freesound.org/data/previews/256/256113_3263906-lq.mp3"></audio>
+
+<script>
+// Fondo dinámico de colores
+const colors = ["#FFDEE9", "#B5FFFC", "#E3FFB5", "#FFC6B5", "#C6B5FF"];
+let colorIndex = 0;
+function changeBackground(){
+    document.body.style.background = colors[colorIndex];
+    colorIndex = (colorIndex + 1) % colors.length;
+}
+setInterval(changeBackground, 7000);
+changeBackground();
+
+// Datos de ciencias y ramas
+const sciences = {
+    "Matemáticas": {
+        description: "Estudia números, formas, estructuras y patrones. Es la base de muchas ciencias y aplicaciones tecnológicas.",
+        branches:{
+            "Álgebra":"Analiza símbolos y relaciones entre ellos, resolviendo ecuaciones y fórmulas.",
+            "Geometría":"Estudia formas, figuras y el espacio, incluyendo áreas, volúmenes y proporciones.",
+            "Cálculo":"Analiza variaciones y cambios mediante derivadas e integrales."
+        }
+    },
+    "Física": {
+        description:"Ciencia que estudia la materia, energía, fuerzas y las leyes del universo.",
+        branches:{
+            "Mecánica":"Estudia el movimiento y equilibrio de los cuerpos.",
+            "Termodinámica":"Analiza calor, temperatura y energía.",
+            "Óptica":"Estudia la luz, lentes y fenómenos ópticos."
+        }
+    },
+    "Química": {
+        description:"Estudia la composición, estructura y propiedades de la materia, así como las reacciones químicas.",
+        branches:{
+            "Química Orgánica":"Estudia compuestos de carbono y sus reacciones.",
+            "Química Inorgánica":"Estudia compuestos sin carbono.",
+            "Bioquímica":"Analiza procesos químicos en organismos vivos."
+        }
+    },
+    "Biología": {
+        description:"Estudia los seres vivos, su estructura, función, evolución y relación con el entorno.",
+        branches:{
+            "Botánica":"Estudia las plantas, su anatomía y fisiología.",
+            "Zoología":"Estudia los animales y sus comportamientos.",
+            "Genética":"Estudia herencia, genes y ADN."
+        }
+    },
+    "Ciencias de la Computación": {
+        description:"Estudia el procesamiento de información y el desarrollo de sistemas computacionales.",
+        branches:{
+            "Programación":"Diseño y desarrollo de software y algoritmos.",
+            "Inteligencia Artificial":"Creación de sistemas que simulan inteligencia humana.",
+            "Redes":"Estudio de comunicación entre computadoras y sistemas."
+        }
+    },
+    "Geología": {
+        description:"Estudia la Tierra, su composición, estructura y procesos internos.",
+        branches:{
+            "Mineralogía":"Estudia minerales y sus propiedades.",
+            "Volcanología":"Estudia volcanes y actividad volcánica.",
+            "Sismología":"Estudia terremotos y movimientos de la corteza terrestre."
+        }
+    },
+    "Astronomía": {
+        description:"Estudia el universo, estrellas, planetas, galaxias y fenómenos cósmicos.",
+        branches:{
+            "Astrofísica":"Analiza la física de los cuerpos celestes.",
+            "Cosmología":"Estudia la formación y evolución del universo.",
+            "Planetología":"Analiza planetas y satélites."
+        }
+    },
+    "Psicología": {
+        description:"Estudia la mente y el comportamiento humano.",
+        branches:{
+            "Psicología Clínica":"Tratamiento de trastornos mentales y emocionales.",
+            "Psicología Cognitiva":"Analiza procesos mentales como memoria y pensamiento.",
+            "Psicología Social":"Estudia cómo influye el entorno en el comportamiento."
+        }
+    },
+    "Sociología": {
+        description:"Estudia la sociedad, relaciones humanas y estructuras sociales.",
+        branches:{
+            "Sociología Urbana":"Analiza la vida en ciudades y comunidades.",
+            "Sociología Educativa":"Estudia el impacto de la educación en la sociedad.",
+            "Sociología del Trabajo":"Analiza las relaciones laborales y organización."
+        }
+    },
+    "Historia": {
+        description:"Estudia los acontecimientos pasados de la humanidad y sus consecuencias.",
+        branches:{
+            "Historia Antigua":"Estudia civilizaciones antiguas y su legado.",
+            "Historia Medieval":"Analiza la Edad Media, sus sociedades y cultura.",
+            "Historia Contemporánea":"Estudia eventos recientes y su impacto en el mundo actual."
+        }
+    }
+};
+
+// Cargar opciones
+const select = document.getElementById('scienceSelect');
+for(const key in sciences){
+    const option = document.createElement('option');
+    option.value = key;
+    option.textContent = key;
+    select.appendChild(option);
+}
+
+const clickSound = document.getElementById('clickSound');
+
+function showScience(name){
+    if(!name || !sciences[name]) return;
+    clickSound.play();
+    const content = document.getElementById('content');
+    const sci = sciences[name];
+    content.innerHTML = `<h3>${name}</h3>
+                         <p>${sci.description}</p>
+                         <h4>Ramas:</h4>
+                         <ul>${Object.keys(sci.branches).map(branch=>{
+                             return `<li style="cursor:pointer; font-weight:bold; color:#ff6f61;">${branch}
+                                        <div class="branch-info">
+                                            <p>${sci.branches[branch]}</p>
+                                        </div>
+                                     </li>`
+                         }).join('')}</ul>`;
+    const branchItems = content.querySelectorAll('li');
+    branchItems.forEach(item=>{
+        item.addEventListener('click', function(e){
+            e.stopPropagation();
+            const info = this.querySelector('.branch-info');
+            if(info) info.style.display = info.style.display==='block'?'none':'block';
+        });
+    });
+}
+
+// Evento selección
+select.addEventListener('change',()=> showScience(select.value));
+
+// Función buscar
+document.getElementById('searchBox').addEventListener('input',function(){
+    const query = this.value.toLowerCase();
+    for(const key in sciences){
+        if(key.toLowerCase().includes(query)){
+            select.value = key;
+            showScience(key);
+            return;
+        }
+    }
+});
+
+// Ciencia aleatoria
+function showRandomScience(){
+    const keys = Object.keys(sciences);
+    const randomKey = keys[Math.floor(Math.random()*keys.length)];
+    select.value = randomKey;
+    showScience(randomKey);
+}
+</script>
+</body>
+</html>
